@@ -60,19 +60,17 @@ struct ContentView: View {
         .onAppear() {
             print("debug ContentView onAppear \(String(describing: horizontalSizeClass))")
         }
-        .onChange(of: selectedCategory) { newValue in
+        .onChange(of: selectedCategory, { oldValue, newValue in
             selectedColor = nil
-        }
-        .onChange(of: horizontalSizeClass) { newValue in
-            print("debug ContentView onChange \(String(describing: horizontalSizeClass)) -> \(String(describing: newValue))")
+        })
+        .onChange(of: horizontalSizeClass) { oldValue, newValue in
+            print("debug ContentView onChange \(String(describing: oldValue)) -> \(String(describing: newValue))")
         }
     }
 }
 
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-            .previewLayout(.fixed(width: 1024, height: 768))
-    }
+#Preview {
+    ContentView()
+        .previewLayout(.fixed(width: 1024, height: 768))
 }

@@ -5,12 +5,12 @@ Basic implementation of NavigationSplitView has several bugs and issues and does
 
 ### Usage
 1. Clone the repo
-2. Open /XcodeProject/NewNav.xcodeproj with Xcode 14
+2. Open /XcodeProject/NewNav.xcodeproj with Xcode 15
 3. Build and Run
 
 ### Requirements
-1. Xcode Version 14.0 beta (14A5228q)
-2. iOS 16, iPadOS 16 betas
+1. Xcode Version 15.0 beta (15A5160n)
+2. iOS 17, iPadOS 17 betas
 
 ### Sources
 1. [The SwiftUI cookbook for navigation](https://developer.apple.com/videos/play/wwdc2022/10054/)

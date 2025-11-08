@@ -21,6 +21,7 @@ struct CategoryView: View {
     }
     
 }
+
 struct CategoryView_Previews: PreviewProvider {
     static var previews: some View {
         Group {

@@ -1,5 +1,24 @@
 import SwiftUI
 
+struct ColorPlaceholder: View {
+    var body: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "eye.slash")
+                .font(.system(size: 32))
+                .foregroundColor(.secondary)
+
+            Text("No Color Selected")
+                .font(.headline)
+
+            Text("Select a color from the list to see its properties")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
 struct InspectorPanel: View {
     let color: CustomColor?
 
@@ -65,20 +84,7 @@ struct InspectorPanel: View {
                 .padding()
             }
         } else {
-            VStack(spacing: 12) {
-                Image(systemName: "eye.slash")
-                    .font(.system(size: 32))
-                    .foregroundColor(.secondary)
-
-                Text("No Color Selected")
-                    .font(.headline)
-
-                Text("Select a color from the list to see its properties")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            ColorPlaceholder()
         }
     }
 }

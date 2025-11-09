@@ -56,7 +56,7 @@ struct ContentView: View {
             print("debug ContentView onAppear \(String(describing: horizontalSizeClass))")
         }
         .onChange(of: selectedCategory) { oldValue, newValue in
-            selectedColor = selectedCategory?.colors[0]
+            selectedColor = selectedCategory?.colors.first
         }
         .onChange(of: horizontalSizeClass) { oldValue, newValue in
             print(

@@ -1,0 +1,47 @@
+@Tutorial(name: "NavigationSplitViewImplementation") {
+    @Intro(title: "Build a three-column experience") {
+        Learn how to embed your SwiftUI views inside ``NavigationSplitView`` and keep selections synchronized across sidebar, content, and inspector columns.
+    }
+
+    @Chapter(name: "Prepare the data model") {
+        @Step {
+            Define an identifiable model that represents the items you want to browse, for example a `struct Project: Identifiable` with an `id`, `title`, and optional `details`.
+        }
+
+        @Step {
+            Provide a collection of sample data so that the view hierarchy can populate the sidebar list and the detail panels during development.
+        }
+
+        @Step {
+            Store the selection in a `@State private var selection: Project.ID?` property. Exposing the selection as a binding lets `NavigationSplitView` update it when the user changes focus.
+        }
+    }
+
+    @Chapter(name: "Compose the split view") {
+        @Step {
+            Wrap the navigation columns in ``NavigationSplitView`` and supply closures for the sidebar and detail content. Use a `List(projects, selection: $selection)` inside the sidebar closure to display the available options.
+        }
+
+        @Step {
+            Present the focused content in the detail closure. A `Group` that unwraps `selection` can show either a `ProjectDetailView(project:)` or a placeholder explaining how to make a selection.
+        }
+
+        @Step {
+            Add an inspector column when you have secondary information, such as metadata, tags, or change history. Provide the inspector using the optional `inspector:` parameter available on macOS and iPadOS 17.
+        }
+    }
+
+    @Chapter(name: "Refine platform behavior") {
+        @Step {
+            Constrain column visibility with ``NavigationSplitView/columnVisibility(_:)`` to keep the interface comfortable on iPhone. For instance, set `.constant(.all)` on large displays and `.automatic` on compact ones.
+        }
+
+        @Step {
+            Use dedicated preview providers or device-specific modifiers to verify how your split view reacts to size class changes and multiwindow scenarios.
+        }
+
+        @Step {
+            Connect additional state, such as selection-dependent toolbars or commands, by observing the same `selection` binding from parent containers or shared view models.
+        }
+    }
+}

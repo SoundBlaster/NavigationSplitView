@@ -1,0 +1,12 @@
+@Tutorials(name: "NavigationSplitView Guides") {
+    @Intro(title: "Master multi-column navigation") {
+        Learn about the repository and follow the accompanying tutorial to integrate ``NavigationSplitView`` into your own app.
+    }
+
+    @Section(title: "Start here") {
+        @ContentAndMedia(layout: horizontal) {
+            @Reference(name: "doc:NavigationSplitViewOverview")
+            @Reference(name: "NavigationSplitViewImplementation")
+        }
+    }
+}

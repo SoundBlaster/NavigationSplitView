@@ -32,7 +32,7 @@ struct InspectorPanel: View {
 
     private var shouldShowCloseButton: Bool {
         #if os(iOS)
-        return UIDevice.current.userInterfaceIdiom == .phone
+        return UIDevice.current.userInterfaceIdiom == .phone && horizontalSizeClass == .regular
         #else
         return false
         #endif

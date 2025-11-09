@@ -23,8 +23,8 @@ struct ContentView: View {
 
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
-    @State private var selectedCategory: CustomColorCategory? = dataSource.colorsCategories[0]
-    @State private var selectedColor: CustomColor? = dataSource.colorsCategories[0].colors[0]
+    @State private var selectedCategory: CustomColorCategory? = dataSource.colorsCategories.first
+    @State private var selectedColor: CustomColor? = dataSource.colorsCategories.first?.colors.first
     @State private var columnVisibility = NavigationSplitViewVisibility.doubleColumn
     @State private var pathCategory: NavigationPath = NavigationPath()
     @State private var pathColor: NavigationPath = NavigationPath()

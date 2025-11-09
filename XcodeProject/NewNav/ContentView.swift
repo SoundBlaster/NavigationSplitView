@@ -1,38 +1,16 @@
 import SwiftUI
 
-struct Data {
-    var colorsCategories: [CustomColorCategory] = [
-        CustomColorCategory(
-            colors: [
-                CustomColor.red,
-                CustomColor.blue,
-                CustomColor.yellow,
-            ], name: "common"),
-        CustomColorCategory(
-            colors: [
-                CustomColor.cyan,
-                CustomColor.mint,
-                CustomColor.accent,
-            ], name: "specific"),
-    ]
-}
-
-let dataSource = Data()
-
 struct ContentView: View {
 
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    
-    @State private var selectedCategory: CustomColorCategory? = dataSource.colorsCategories.first
-    @State private var selectedColor: CustomColor? = dataSource.colorsCategories.first?.colors.first
-    @State private var columnVisibility = NavigationSplitViewVisibility.doubleColumn
-    @State private var pathCategory: NavigationPath = NavigationPath()
-    @State private var pathColor: NavigationPath = NavigationPath()
-    @State private var showInspector = false
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    private let library = ColorLibrary()
+    @State private var navigationModel = NavigationModel()
     
     var body: some View {
-        NavigationSplitView(columnVisibility: $columnVisibility) {
-            List(dataSource.colorsCategories, selection: $selectedCategory) { category in
+        @Bindable var model = navigationModel
+        
+        NavigationSplitView(columnVisibility: $model.columnVisibility) {
+            List(library.categories, selection: $model.selectedCategory) { category in
                 NavigationLink(value: category) {
                     Text(category.name)
                 }
@@ -40,36 +18,30 @@ struct ContentView: View {
             .navigationTitle("Categories")
         } content: {
             CategoryView(
-                category: selectedCategory,
-                selection: $selectedColor
+                category: model.selectedCategory,
+                selection: $model.selectedColor
             )
         } detail: {
-            DetailView(color: $selectedColor)
+            DetailView(color: $model.selectedColor)
+                .toolbar {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button {
+                            model.showInspector.toggle()
+                        } label: {
+                            Label("Inspector", systemImage: "sidebar.right")
+                        }
+                    }
+                }
         }
         .navigationSplitViewStyle(.automatic)
-        .inspector(isPresented: $showInspector) {
-            InspectorPanel(color: selectedColor)
+        .inspector(isPresented: $model.showInspector) {
+            InspectorPanel(color: model.selectedColor)
         }
-        .onAppear {
-            print("debug ContentView onAppear \(String(describing: horizontalSizeClass))")
-            // Initialize inspector visibility based on size class
-            showInspector = horizontalSizeClass != .compact
+        .task {
+            model.bootstrap(using: library.categories, sizeClass: horizontalSizeClass)
         }
-        .onChange(of: selectedCategory) { oldValue, newValue in
-            // Only auto-select first color in regular width to avoid skipping the list in compact mode
-            if horizontalSizeClass != .compact {
-                selectedColor = selectedCategory?.colors.first
-            } else {
-                selectedColor = nil
-            }
-        }
-        .onChange(of: horizontalSizeClass) { oldValue, newValue in
-            print(
-                "debug ContentView onChange \(String(describing: oldValue)) -> \(String(describing: newValue))"
-            )
-            // Update inspector visibility based on size class
-            // Auto-show in regular width, auto-hide in compact width
-            showInspector = newValue != .compact
+        .onChange(of: model.selectedCategory) { _, _ in
+            model.handleCategoryChange(sizeClass: horizontalSizeClass)
         }
     }
 }

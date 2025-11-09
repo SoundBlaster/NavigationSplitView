@@ -1,7 +1,11 @@
-.onChange(of: selectedCategory) { _, _ in
-    if horizontalSizeClass != .compact {
-        selectedColor = selectedCategory?.colors.first
-    } else {
-        selectedColor = nil
+@Environment(\.horizontalSizeClass) private var horizontalSizeClass
+@State private var navigationModel = NavigationModel()
+
+var body: some View {
+    @Bindable var model = navigationModel
+
+    // ...
+    .onChange(of: model.selectedCategory) { _, _ in
+        model.handleCategoryChange(sizeClass: horizontalSizeClass)
     }
 }

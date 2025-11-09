@@ -1,58 +1,32 @@
 import SwiftUI
 
 struct AppContentView: View {
-    @StateObject private var navigationModel = NavigationModel()
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @State private var navigationModel = NavigationModel()
+    private let library = ColorLibrary()
 
     var body: some View {
-        NavigationSplitView(columnVisibility: columnVisibilityBinding) {
-            List(dataSource.colorsCategories, selection: selectedCategoryBinding) { category in
+        @Bindable var model = navigationModel
+
+        NavigationSplitView(columnVisibility: $model.columnVisibility) {
+            List(library.categories, selection: $model.selectedCategory) { category in
                 Text(category.name)
                     .tag(category)
             }
             .navigationTitle("Categories")
         } content: {
             CategoryView(
-                category: navigationModel.selectedCategory,
-                selection: selectedColorBinding
+                category: model.selectedCategory,
+                selection: $model.selectedColor
             )
         } detail: {
-            DetailView(color: selectedColorBinding)
+            DetailView(color: $model.selectedColor)
         }
-        .inspector(isPresented: inspectorBinding) {
-            InspectorPanel(color: navigationModel.selectedColor)
+        .inspector(isPresented: $model.showInspector) {
+            InspectorPanel(color: model.selectedColor)
         }
         .task {
-            if navigationModel.selectedCategory == nil {
-                navigationModel.bootstrap(with: dataSource.colorsCategories)
-            }
+            model.bootstrap(using: library.categories, sizeClass: horizontalSizeClass)
         }
-    }
-
-    private var columnVisibilityBinding: Binding<NavigationSplitViewVisibility> {
-        Binding(
-            get: { navigationModel.columnVisibility },
-            set: { navigationModel.columnVisibility = $0 }
-        )
-    }
-
-    private var selectedCategoryBinding: Binding<CustomColorCategory?> {
-        Binding(
-            get: { navigationModel.selectedCategory },
-            set: { navigationModel.selectedCategory = $0 }
-        )
-    }
-
-    private var selectedColorBinding: Binding<CustomColor?> {
-        Binding(
-            get: { navigationModel.selectedColor },
-            set: { navigationModel.selectedColor = $0 }
-        )
-    }
-
-    private var inspectorBinding: Binding<Bool> {
-        Binding(
-            get: { navigationModel.showInspector },
-            set: { navigationModel.showInspector = $0 }
-        )
     }
 }

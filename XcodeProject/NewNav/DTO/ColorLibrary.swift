@@ -1,12 +1,17 @@
-struct Data {
-    var colorsCategories: [CustomColorCategory] = [
+import Foundation
+
+/// Provides sample color categories that feed the navigation hierarchy.
+struct ColorLibrary {
+    let categories: [CustomColorCategory]
+
+    init(categories: [CustomColorCategory] = [
         CustomColorCategory(
             colors: [
                 CustomColor.red,
                 CustomColor.blue,
                 CustomColor.yellow,
             ],
-            name: "common"
+            name: "Common"
         ),
         CustomColorCategory(
             colors: [
@@ -14,9 +19,9 @@ struct Data {
                 CustomColor.mint,
                 CustomColor.accent,
             ],
-            name: "specific"
-        )
-    ]
+            name: "Specific"
+        ),
+    ]) {
+        self.categories = categories
+    }
 }
-
-let dataSource = Data()

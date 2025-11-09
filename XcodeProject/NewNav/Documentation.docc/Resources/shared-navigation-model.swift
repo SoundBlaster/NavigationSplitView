@@ -1,10 +1,12 @@
 import SwiftUI
+import Observation
 
-final class NavigationModel: ObservableObject {
-    @Published var selectedCategory: CustomColorCategory?
-    @Published var selectedColor: CustomColor?
-    @Published var columnVisibility: NavigationSplitViewVisibility = .doubleColumn
-    @Published var showInspector = false
+@Observable
+final class NavigationModel {
+    var selectedCategory: CustomColorCategory?
+    var selectedColor: CustomColor?
+    var columnVisibility: NavigationSplitViewVisibility = .doubleColumn
+    var showInspector = false
 
     func bootstrap(with categories: [CustomColorCategory]) {
         selectedCategory = categories.first

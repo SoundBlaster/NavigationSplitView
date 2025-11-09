@@ -1,9 +1,15 @@
-@Environment(\.horizontalSizeClass) var horizontalSizeClass
-@State private var showInspector = false
+@Environment(\.horizontalSizeClass) private var horizontalSizeClass
+@State private var navigationModel = NavigationModel()
+private let library = ColorLibrary()
 
-.onAppear {
-    showInspector = horizontalSizeClass != .compact
-}
-.onChange(of: horizontalSizeClass) { _, newValue in
-    showInspector = newValue != .compact
+var body: some View {
+    @Bindable var model = navigationModel
+
+    // ...
+    .task {
+        model.bootstrap(using: library.categories, sizeClass: horizontalSizeClass)
+    }
+    .onChange(of: horizontalSizeClass) { _, newValue in
+        model.handleSizeClassChange(newValue)
+    }
 }

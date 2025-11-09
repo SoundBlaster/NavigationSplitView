@@ -16,13 +16,13 @@
             }
 
             @Step {
-                Provide a collection of sample data so the view hierarchy can populate the sidebar and detail panes during development. Keep it in memory (like `Data.categories`) until you connect a real data source.
+                Provide a collection of sample data so the view hierarchy can populate the sidebar and detail panes during development. Keep it in memory (like the `ColorLibrary` sample categories) until you connect a real data source.
 
-                @Code(name: "Data.swift", file: "sample-data.swift")
+                @Code(name: "ColorLibrary.swift", file: "color-library.swift")
             }
 
             @Step {
-                Store the selection in state (`@State private var selectedColor: CustomColor?`) or pass bindings down to child views. `NavigationSplitView` updates these bindings automatically as the user interacts with the UI.
+                Store navigation state in an observable model (for example `@State private var navigationModel = NavigationModel()`) and access bindings via `@Bindable`. The model exposes the selected category, selected color, inspector visibility, and column configuration.
 
                 @Code(name: "ContentView.swift", file: "selection-state.swift")
             }
@@ -36,7 +36,7 @@
 
         @Steps {
             @Step {
-                Wrap the navigation columns in `NavigationSplitView(columnVisibility:)` and use a `List(categories, selection: $selectedCategory)` inside the sidebar closure so users can pick a category.
+                Wrap the navigation columns in `NavigationSplitView(columnVisibility:)` and use a `List(categories, selection: selectedCategoryBinding)` inside the sidebar closure so users can pick a category. Bindings derived from the navigation model keep each column in sync.
 
                 @Code(name: "ContentView.swift", file: "split-view-layout.swift")
             }
@@ -48,7 +48,7 @@
             }
 
             @Step {
-                Add an inspector column when you have secondary information, such as metadata, tags, or change history. Pass the view through the `inspector` parameter and toggle its visibility with a `@State` binding.
+                Add an inspector column when you have secondary information, such as metadata, tags, or change history. Pass the view through the `inspector` parameter and provide a toolbar button that toggles the inspector by updating the navigation model’s bindings.
 
                 @Code(name: "ContentView.swift", file: "inspector-panel.swift")
             }
@@ -62,13 +62,13 @@
 
         @Steps {
             @Step {
-                Constrain column visibility with `NavigationSplitViewVisibility` to keep the interface comfortable on iPhone. Clamp to `.doubleColumn` or `.all` on wider devices and fall back to `.automatic` when space is tight.
+                Constrain column visibility with `NavigationSplitViewVisibility` to keep the interface comfortable on iPhone. Store it in your navigation model and bind it directly to the split view so layout choices persist.
 
                 @Code(name: "ContentView.swift", file: "column-visibility.swift")
             }
 
             @Step {
-                Observe `horizontalSizeClass` and respond to changes with modifiers like `onAppear` and `onChange`. Update inspector visibility or selected items when the size class changes.
+                Observe `horizontalSizeClass` and respond to changes with modifiers like `task` and `onChange`. Update the navigation model whenever the size class changes so inspectors and selections stay in sync.
 
                 @Code(name: "ContentView.swift", file: "size-class-handling.swift")
             }

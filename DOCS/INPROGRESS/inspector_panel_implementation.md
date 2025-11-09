@@ -32,6 +32,26 @@ Simple detail view that:
 - Shows placeholder when no color is selected
 - **Does NOT manage inspector state** - inspector is controlled by ContentView
 
+```swift
+struct DetailView: View {
+    @Binding var color: CustomColor?
+
+    var body: some View {
+        VStack {
+            if let color {
+                Rectangle()
+                    .fill(color.color)
+                    .frame(width: 200, height: 200)
+                Text(color.name)
+            } else {
+                ColorPlaceholder()
+            }
+        }
+        .navigationTitle(color?.name ?? "")
+    }
+}
+```
+
 ### 3. Updated ContentView.swift
 **Location**: `XcodeProject/NewNav/ContentView.swift`
 

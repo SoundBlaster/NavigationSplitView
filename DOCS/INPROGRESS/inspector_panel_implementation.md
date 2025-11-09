@@ -1,7 +1,7 @@
 # Inspector Panel Implementation - FINAL
 
 ## Overview
-Implemented an Inspector panel in the NewNav app that displays as a separate right-side panel using SwiftUI's `.inspector()` modifier. The panel is toggled on/off by tapping the color rectangle in DetailView, providing a clean and intuitive user interaction pattern.
+Implemented an Inspector panel in the NewNav app that displays as a separate right-side panel using SwiftUI's `.inspector()` modifier. The panel automatically shows/hides based on horizontal size class: visible on iPad and Mac (regular width), hidden on iPhone (compact width).
 
 ## Changes Made (Final Version)
 
@@ -22,56 +22,57 @@ Improved Inspector panel view that:
 - Responsive empty state with icon and helpful message
 - Automatically appears/disappears based on color selection
 
-### 2. Updated DetailView.swift
+### 2. DetailView.swift
 **Location**: `XcodeProject/NewNav/DetailView.swift`
 
-Added local state and interaction:
-- `@State var showInspector: Bool = false` - controls inspector visibility
-- `onTapGesture` on Rectangle() - toggles inspector on/off
-- `.inspector(isPresented: $showInspector)` - manages inspector panel display
+Simple detail view that:
+- Accepts a `@Binding var color: CustomColor?` parameter
+- Displays a color rectangle (200x200) with the selected color
+- Shows color name as text and navigation title
+- Shows placeholder when no color is selected
+- **Does NOT manage inspector state** - inspector is controlled by ContentView
 
-User can now toggle the inspector by tapping the color rectangle.
-
-### 3. Simplified ContentView.swift
+### 3. Updated ContentView.swift
 **Location**: `XcodeProject/NewNav/ContentView.swift`
 
-Removed the `.inspector()` modifier from ContentView since it's now handled directly in DetailView.
-
-DetailView is now fully self-contained and manages its own inspector state.
+Added inspector control based on size class:
+- Computed property `showInspector` returns `horizontalSizeClass != .compact`
+- `.inspector(isPresented: .constant(showInspector))` - manages inspector panel display
+- Inspector automatically visible on iPad/Mac, hidden on iPhone
+- Not user-toggleable - visibility is determined by device size class only
 
 ## Build Status
 ✅ **BUILD SUCCEEDED** - All files compile without errors
 
 ## Technical Details
 
-### Inspector Toggle Pattern in DetailView
-The inspector is controlled locally in DetailView with tap interaction:
+### Inspector Size Class Pattern in ContentView
+The inspector is controlled from ContentView based on horizontal size class:
 ```swift
-struct DetailView: View {
-    let color: CustomColor?
-    @State var showInspector: Bool = false
-    
+struct ContentView: View {
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+
+    private var showInspector: Bool {
+        horizontalSizeClass != .compact
+    }
+
     var body: some View {
-        // ...
-        Rectangle()
-            .fill(color.color)
-            .frame(width: 200, height: 200)
-            .onTapGesture {
-                showInspector.toggle()
-            }
-        // ...
-        .inspector(isPresented: $showInspector) {
-            InspectorPanel(color: color)
+        NavigationSplitView(columnVisibility: $columnVisibility) {
+            // ... sidebar, content, detail
+        }
+        .inspector(isPresented: .constant(showInspector)) {
+            InspectorPanel(color: selectedColor)
         }
     }
 }
 ```
 
 This pattern:
-- Uses local `@State` to manage inspector visibility
-- Toggles on rectangle tap
-- Binding allows user to close inspector by tapping again or using system close
-- Clean encapsulation within DetailView
+- Uses computed property to determine inspector visibility based on size class
+- Automatically shows on regular width devices (iPad, Mac)
+- Automatically hides on compact width devices (iPhone)
+- Uses `.constant(showInspector)` - not user-toggleable
+- Responsive to device rotation and window resizing
 
 ### InspectorPanel Component Structure
 ```swift
@@ -100,30 +101,37 @@ struct InspectorPanel: View {
 
 ### Architecture Pattern
 ```
-ContentView (Regular Size)
+ContentView
+├── @Environment(\.horizontalSizeClass) - monitors size class
 ├── NavigationSplitView
 │   ├── Sidebar: Categories list
 │   ├── Content: CategoryView (colors list)
-│   └── Detail: DetailView
-│       ├── Color Rectangle (tap to show/hide inspector)
-│       └── .inspector() → InspectorPanel
+│   └── Detail: DetailView (simple color display)
+│       └── Color Rectangle (no tap gesture)
+└── .inspector(isPresented: .constant(showInspector))
+    └── InspectorPanel (shown when horizontalSizeClass != .compact)
 ```
 
 ## User Interaction Flow
 
-### Showing Inspector
-1. User taps the color rectangle in DetailView
-2. `showInspector` state toggles to `true`
-3. Inspector panel slides in from the right
-4. Main detail content is pushed left
+### Inspector Visibility (Automatic)
+The inspector automatically shows/hides based on device and window size:
 
-### Hiding Inspector
-1. User can either:
-   - Tap the rectangle again to toggle off
-   - Use the system close button on the inspector
-   - Swipe to close (depending on system)
-2. `showInspector` toggles back to `false`
-3. Inspector slides out smoothly
+**Regular Width (iPad, Mac)**:
+1. Inspector is always visible when in regular horizontal size class
+2. Displayed as a right-side panel alongside the detail view
+3. Updates content when user selects different colors
+4. Cannot be manually hidden by user
+
+**Compact Width (iPhone)**:
+1. Inspector is always hidden when in compact horizontal size class
+2. Screen space is preserved for the main NavigationSplitView
+3. Automatically hides when device is rotated to portrait on iPhone
+
+**Responsive Behavior**:
+- On iPad: Inspector appears/disappears when rotating device or resizing window
+- On Mac: Inspector appears/disappears when resizing window
+- Transition is smooth and automatic
 
 ### Inspector Content
 When visible, inspector shows:
@@ -131,11 +139,12 @@ When visible, inspector shows:
 - Color name and truncated UUID
 - Color type information ("SwiftUI Color")
 - All content is scrollable if it overflows
+- Updates automatically when selectedColor changes
 
 ## Files Changed
 1. `XcodeProject/NewNav/InspectorPanel.swift` - **CREATED** (inspector content component)
-2. `XcodeProject/NewNav/DetailView.swift` - **MODIFIED** (added state and tap gesture)
-3. `XcodeProject/NewNav/ContentView.swift` - **SIMPLIFIED** (removed old inspector implementation)
+2. `XcodeProject/NewNav/ContentView.swift` - **MODIFIED** (added size-class-based inspector control)
+3. `XcodeProject/NewNav/DetailView.swift` - Simple view, no inspector-related code
 
 ## Compilation Notes
 - ✅ No errors
@@ -144,6 +153,7 @@ When visible, inspector shows:
 - ✅ Compatible with macOS and iPad layouts
 
 ## Next Steps (Optional Enhancements)
+- Add user toggle for inspector (e.g., tap gesture on color or toolbar button)
 - Add color RGB/Hex value display and copy functionality
 - Add color history tracking in the inspector
 - Add favorite colors management

@@ -1,47 +1,103 @@
-@Tutorial(name: "NavigationSplitViewImplementation") {
+@Tutorial(time: 25) {
     @Intro(title: "Build a three-column experience") {
-        Learn how to embed your SwiftUI views inside ``NavigationSplitView`` and keep selections synchronized across sidebar, content, and inspector columns.
+        Learn how to embed your SwiftUI views inside `NavigationSplitView` and keep selections synchronized across sidebar, content, and inspector columns. Follow along with the sample project in this repository to produce a responsive UI that works on iPadOS, macOS, and iOS.
     }
 
-    @Chapter(name: "Prepare the data model") {
-        @Step {
-            Define an identifiable model that represents the items you want to browse, for example a `struct Project: Identifiable` with an `id`, `title`, and optional `details`.
+    @Section(title: "Prepare the data model") {
+        @ContentAndMedia {
+            Start with lightweight data structures that are easy to present inside SwiftUI. Identifiable models make it trivial to bind selections to the split view columns.
         }
 
-        @Step {
-            Provide a collection of sample data so that the view hierarchy can populate the sidebar list and the detail panels during development.
-        }
+        @Steps {
+            @Step {
+                Define an identifiable model that represents the items you want to browse, for example the `CustomColor` and `CustomColorCategory` types from the sample project. Include stable identifiers so SwiftUI can diff list rows.
 
-        @Step {
-            Store the selection in a `@State private var selection: Project.ID?` property. Exposing the selection as a binding lets `NavigationSplitView` update it when the user changes focus.
-        }
-    }
+                @Code(name: "CustomColor.swift", file: "data-model.swift")
+            }
 
-    @Chapter(name: "Compose the split view") {
-        @Step {
-            Wrap the navigation columns in ``NavigationSplitView`` and supply closures for the sidebar and detail content. Use a `List(projects, selection: $selection)` inside the sidebar closure to display the available options.
-        }
+            @Step {
+                Provide a collection of sample data so the view hierarchy can populate the sidebar and detail panes during development. Keep it in memory (like `Data.categories`) until you connect a real data source.
 
-        @Step {
-            Present the focused content in the detail closure. A `Group` that unwraps `selection` can show either a `ProjectDetailView(project:)` or a placeholder explaining how to make a selection.
-        }
+                @Code(name: "Data.swift", file: "sample-data.swift")
+            }
 
-        @Step {
-            Add an inspector column when you have secondary information, such as metadata, tags, or change history. Provide the inspector using the optional `inspector:` parameter available on macOS and iPadOS 17.
+            @Step {
+                Store the selection in state (`@State private var selectedColor: CustomColor?`) or pass bindings down to child views. `NavigationSplitView` updates these bindings automatically as the user interacts with the UI.
+
+                @Code(name: "ContentView.swift", file: "selection-state.swift")
+            }
         }
     }
 
-    @Chapter(name: "Refine platform behavior") {
-        @Step {
-            Constrain column visibility with ``NavigationSplitView/columnVisibility(_:)`` to keep the interface comfortable on iPhone. For instance, set `.constant(.all)` on large displays and `.automatic` on compact ones.
+    @Section(title: "Compose the split view") {
+        @ContentAndMedia {
+            `NavigationSplitView` renders up to three columns. You decide how to populate each closure and when to surface optional surfaces like the inspector.
         }
 
-        @Step {
-            Use dedicated preview providers or device-specific modifiers to verify how your split view reacts to size class changes and multiwindow scenarios.
+        @Steps {
+            @Step {
+                Wrap the navigation columns in `NavigationSplitView(columnVisibility:)` and use a `List(categories, selection: $selectedCategory)` inside the sidebar closure so users can pick a category.
+
+                @Code(name: "ContentView.swift", file: "split-view-layout.swift")
+            }
+
+            @Step {
+                Present the focused content in the detail area. A container view such as `DetailView` can unwrap the optional selection and either render the chosen item or display a placeholder.
+
+                @Code(name: "DetailView.swift", file: "detail-view.swift")
+            }
+
+            @Step {
+                Add an inspector column when you have secondary information, such as metadata, tags, or change history. Pass the view through the `inspector` parameter and toggle its visibility with a `@State` binding.
+
+                @Code(name: "ContentView.swift", file: "inspector-panel.swift")
+            }
+        }
+    }
+
+    @Section(title: "Refine platform behavior") {
+        @ContentAndMedia {
+            Size classes and column visibility controls let you tailor the experience to each platform without creating separate screens.
         }
 
-        @Step {
-            Connect additional state, such as selection-dependent toolbars or commands, by observing the same `selection` binding from parent containers or shared view models.
+        @Steps {
+            @Step {
+                Constrain column visibility with `NavigationSplitViewVisibility` to keep the interface comfortable on iPhone. Clamp to `.doubleColumn` or `.all` on wider devices and fall back to `.automatic` when space is tight.
+
+                @Code(name: "ContentView.swift", file: "column-visibility.swift")
+            }
+
+            @Step {
+                Observe `horizontalSizeClass` and respond to changes with modifiers like `onAppear` and `onChange`. Update inspector visibility or selected items when the size class changes.
+
+                @Code(name: "ContentView.swift", file: "size-class-handling.swift")
+            }
+
+            @Step {
+                Connect additional UI state (toolbars, inspectors, preview panes) to the same bindings so the experience stays synchronized even when the user opens multiple windows or rotates their device.
+
+                @Code(name: "ContentView.swift", file: "selection-sync.swift")
+            }
+        }
+    }
+
+    @Section(title: "Next steps") {
+        @ContentAndMedia {
+            Expand the pattern with deep-link navigation paths, multi-selection sidebars, or custom inspectors that expose editing controls.
+        }
+
+        @Steps {
+            @Step {
+                Identify the parts of your own project that can reuse the sample views, then extract the shared state into an observable object or navigation model so multiple windows stay in sync.
+
+                @Code(name: "NavigationModel.swift", file: "shared-navigation-model.swift")
+            }
+
+            @Step {
+                Inject the navigation model into the split view and derive bindings so every column, detail view, and inspector stays synchronized across windows.
+
+                @Code(name: "AppContentView.swift", file: "navigation-model-integration.swift")
+            }
         }
     }
 }

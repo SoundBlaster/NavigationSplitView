@@ -34,11 +34,12 @@ jobs:
         run: |
           set -eo pipefail
           mkdir -p DocsArchive
-          xcrun docc convert Documentation.docc \
+          xcrun docc convert XcodeProject/NewNav/Documentation.docc \
             --fallback-display-name "NavigationSplitView" \
             --fallback-bundle-identifier com.example.NavigationSplitView \
-            --output-path DocsArchive/NavigationSplitView.doccarchive \
-            --index
+            --fallback-bundle-version 1.0 \
+            --emit-lmdb-index \
+            --output-path DocsArchive/NavigationSplitView.doccarchive
 
       - name: Prepare static documentation output
         run: |

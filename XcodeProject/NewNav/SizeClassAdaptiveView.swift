@@ -1,25 +1,22 @@
 import SwiftUI
 
 struct SizeClassAdaptiveView<RegularContent: View, CompactContent: View>: View {
-    private let id = UUID()
     
-    let sizeClass: UserInterfaceSizeClass?
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     let regular: () -> RegularContent
     let compact: () -> CompactContent
     
-    init(sizeClass: UserInterfaceSizeClass? = nil,
-         @ViewBuilder regular: @escaping () -> RegularContent,
+    init(@ViewBuilder regular: @escaping () -> RegularContent,
          @ViewBuilder compact: @escaping () -> CompactContent) {
-        self.sizeClass = sizeClass
         self.regular = regular
         self.compact = compact
     }
     
     var body: some View {
         Group {
-            if sizeClass == nil {
+            if horizontalSizeClass == nil {
                 EmptyView()
-            } else if sizeClass == .regular {
+            } else if horizontalSizeClass == .regular {
                 regular()
             } else {
                 compact()
@@ -30,12 +27,12 @@ struct SizeClassAdaptiveView<RegularContent: View, CompactContent: View>: View {
 struct HorizontalSizeClassAdaptiveView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            SizeClassAdaptiveView(sizeClass: .regular) {
+            SizeClassAdaptiveView {
                 Text("Regular")
             } compact: {
                 Text("Compact")
             }
-            SizeClassAdaptiveView(sizeClass: .compact) {
+            SizeClassAdaptiveView {
                 Text("Regular")
             } compact: {
                 Text("Compact")

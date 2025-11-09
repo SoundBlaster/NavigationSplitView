@@ -41,7 +41,7 @@ struct ContentView: View {
         } content: {
             CategoryView(
                 category: selectedCategory,
-                selection: $selectedColor,
+                selection: $selectedColor
             )
         } detail: {
             DetailView(color: $selectedColor)

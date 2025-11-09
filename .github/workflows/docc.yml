@@ -33,23 +33,17 @@ jobs:
       - name: Build documentation archive
         run: |
           set -eo pipefail
-          xcodebuild docbuild \
-            -project XcodeProject/NewNav.xcodeproj \
-            -scheme NewNav \
-            -destination 'platform=macOS' \
-            -derivedDataPath DerivedData \
-            OTHER_DOCC_FLAGS="--fallback-display-name NavigationSplitView --fallback-bundle-identifier com.example.NavigationSplitView"
+          mkdir -p DocsArchive
+          xcrun docc convert Documentation.docc \
+            --fallback-display-name "NavigationSplitView" \
+            --fallback-bundle-identifier com.example.NavigationSplitView \
+            --output-path DocsArchive/NavigationSplitView.doccarchive \
+            --index
 
       - name: Prepare static documentation output
         run: |
           set -eo pipefail
-          ARCHIVE=$(find DerivedData -type d -name '*.doccarchive' | head -n 1)
-          if [ -z "$ARCHIVE" ]; then
-            echo "No DocC archive produced" >&2
-            exit 1
-          fi
-          echo "Using archive: $ARCHIVE"
-          xcrun docc process-archive transform-for-static-hosting "$ARCHIVE" \
+          xcrun docc process-archive transform-for-static-hosting DocsArchive/NavigationSplitView.doccarchive \
             --hosting-base-path navigation-split-view \
             --output-path DocsBuild
 

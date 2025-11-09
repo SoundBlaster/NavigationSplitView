@@ -56,7 +56,12 @@ struct ContentView: View {
             print("debug ContentView onAppear \(String(describing: horizontalSizeClass))")
         }
         .onChange(of: selectedCategory) { oldValue, newValue in
-            selectedColor = selectedCategory?.colors.first
+            // Only auto-select first color in regular width to avoid skipping the list in compact mode
+            if horizontalSizeClass != .compact {
+                selectedColor = selectedCategory?.colors.first
+            } else {
+                selectedColor = nil
+            }
         }
         .onChange(of: horizontalSizeClass) { oldValue, newValue in
             print(

@@ -23,7 +23,9 @@ struct AppContentView: View {
             DetailView(color: $model.selectedColor)
         }
         .inspector(isPresented: $model.showInspector) {
-            InspectorPanel(color: model.selectedColor)
+            InspectorPanel(color: model.selectedColor) {
+                model.showInspector = false
+            }
         }
         .task {
             model.bootstrap(using: library.categories, sizeClass: horizontalSizeClass)

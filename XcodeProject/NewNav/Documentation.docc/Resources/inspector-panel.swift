@@ -1,23 +1,40 @@
-@State private var navigationModel = NavigationModel()
+import SwiftUI
+#if os(iOS)
+import UIKit
+#endif
 
-var body: some View {
-    @Bindable var model = navigationModel
+struct InspectorPanel: View {
+    let color: CustomColor?
+    var onDismiss: (() -> Void)?
 
-    NavigationSplitView(columnVisibility: $model.columnVisibility) {
-        // sidebar + content
-    } detail: {
-        DetailView(color: $model.selectedColor)
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        model.showInspector.toggle()
-                    } label: {
-                        Label("Inspector", systemImage: "sidebar.right")
-                    }
+    var body: some View {
+        VStack(alignment: .trailing, spacing: 0) {
+            if let onDismiss, shouldShowCloseButton {
+                Button {
+                    onDismiss()
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .accessibilityLabel("Close Inspector")
                 }
+                .padding([.top, .trailing], 12)
             }
+
+            if let color {
+                ScrollView {
+                    // Inspector content
+                }
+            } else {
+                ColorPlaceholder()
+            }
+        }
     }
-    .inspector(isPresented: $model.showInspector) {
-        InspectorPanel(color: model.selectedColor)
+
+    private var shouldShowCloseButton: Bool {
+        #if os(iOS)
+        return UIDevice.current.userInterfaceIdiom == .phone
+        #else
+        return false
+        #endif
     }
 }

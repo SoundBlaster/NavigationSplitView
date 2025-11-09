@@ -48,7 +48,7 @@
             }
 
             @Step {
-                Add an inspector column when you have secondary information, such as metadata, tags, or change history. Pass the view through the `inspector` parameter and provide a toolbar button that toggles the inspector by updating the navigation model’s bindings.
+                Add an inspector column when you have secondary information, such as metadata, tags, or change history. Pass the view through the `inspector` parameter, provide a toolbar button that toggles the panel, and add a close control inside the inspector so users can dismiss it even when system buttons are occluded.
 
                 @Code(name: "ContentView.swift", file: "inspector-panel.swift")
             }

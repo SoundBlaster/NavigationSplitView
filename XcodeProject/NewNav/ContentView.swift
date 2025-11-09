@@ -28,9 +28,7 @@ struct ContentView: View {
     @State private var columnVisibility = NavigationSplitViewVisibility.doubleColumn
     @State private var pathCategory: NavigationPath = NavigationPath()
     @State private var pathColor: NavigationPath = NavigationPath()
-    private var showInspector: Bool {
-        horizontalSizeClass != .compact
-    }
+    @State private var showInspector = false
     
     var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
@@ -49,11 +47,13 @@ struct ContentView: View {
             DetailView(color: $selectedColor)
         }
         .navigationSplitViewStyle(.automatic)
-        .inspector(isPresented: .constant(showInspector)) {
+        .inspector(isPresented: $showInspector) {
             InspectorPanel(color: selectedColor)
         }
         .onAppear {
             print("debug ContentView onAppear \(String(describing: horizontalSizeClass))")
+            // Initialize inspector visibility based on size class
+            showInspector = horizontalSizeClass != .compact
         }
         .onChange(of: selectedCategory) { oldValue, newValue in
             // Only auto-select first color in regular width to avoid skipping the list in compact mode
@@ -67,6 +67,9 @@ struct ContentView: View {
             print(
                 "debug ContentView onChange \(String(describing: oldValue)) -> \(String(describing: newValue))"
             )
+            // Update inspector visibility based on size class
+            // Auto-show in regular width, auto-hide in compact width
+            showInspector = newValue != .compact
         }
     }
 }

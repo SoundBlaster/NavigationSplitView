@@ -9,7 +9,7 @@ struct CategoryView: View {
         SizeClassAdaptiveView {
             ColorsSelectionList(
                 colors: category?.colors ?? [],
-                selection: $selection,
+                selection: $selection
             )
         } compact: {
             ColorsSelectionList(colors: category?.colors ?? [], selection: $selection)

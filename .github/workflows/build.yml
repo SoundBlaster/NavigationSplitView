@@ -1,12 +1,19 @@
 name: Build Verification
 
 on:
-  push:
-    branches: [ main, master ]
   pull_request:
+    branches:
+      - '**'
     paths:
-      - '.github/workflows/**/*.yml'
-      - '.github/workflows/**/*.yaml'
+      - 'XcodeProject/**'
+      - '.github/workflows/*.yml'
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'XcodeProject/**'
+      - '.github/workflows/*.yml'
 
 jobs:
   build-ios:

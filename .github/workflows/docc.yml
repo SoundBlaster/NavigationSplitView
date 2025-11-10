@@ -3,8 +3,16 @@ name: DocC Documentation
 on:
   push:
     branches: [ main ]
+    paths:
+      - '.github/workflows/docc.yml'
+      - 'XcodeProject/NewNav/Documentation.docc/**'
+      - 'DOCS/**'
   pull_request:
     branches: [ main ]
+    paths:
+      - '.github/workflows/docc.yml'
+      - 'XcodeProject/NewNav/Documentation.docc/**'
+      - 'DOCS/**'
 
 permissions:
   contents: read

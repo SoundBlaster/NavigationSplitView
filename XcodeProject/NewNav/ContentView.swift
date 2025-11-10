@@ -42,6 +42,9 @@ struct ContentView: View {
         .task {
             model.bootstrap(using: library.categories, sizeClass: horizontalSizeClass)
         }
+        .onChange(of: horizontalSizeClass) { _, newValue in
+            model.handleSizeClassChange(newValue)
+        }
         .onChange(of: model.selectedCategory) { _, _ in
             model.handleCategoryChange(sizeClass: horizontalSizeClass)
         }

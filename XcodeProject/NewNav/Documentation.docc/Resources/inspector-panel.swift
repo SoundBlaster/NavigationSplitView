@@ -4,6 +4,7 @@ import UIKit
 #endif
 
 struct InspectorPanel: View {
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     let color: CustomColor?
     var onDismiss: (() -> Void)?
 

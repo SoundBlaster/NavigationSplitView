@@ -45,7 +45,7 @@ jobs:
         run: |
           set -eo pipefail
           xcrun docc process-archive transform-for-static-hosting DocsArchive/NavigationSplitView.doccarchive \
-            --hosting-base-path navigation-split-view \
+            --hosting-base-path NavigationSplitView \
             --output-path DocsBuild
 
       - name: Upload documentation artifact

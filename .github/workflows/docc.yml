@@ -118,6 +118,69 @@ jobs:
           echo "=== Checking for NavigationSplitView in JS files ==="
           grep -o "NavigationSplitView" DocsBuild/js/*.js | head -5 || echo "Not found"
 
+      - name: Add .nojekyll and root redirect
+        run: |
+          # Add .nojekyll to prevent GitHub Pages from ignoring files starting with _
+          touch DocsBuild/.nojekyll
+
+          # Create redirect from root to documentation page
+          # The actual documentation lives at /documentation/<bundle-id>/
+          cat > DocsBuild/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en-US">
+          <head>
+            <meta charset="utf-8">
+            <title>Redirecting to NavigationSplitView Documentation</title>
+            <meta http-equiv="refresh" content="0; url=./documentation/navigationsplitview/">
+            <link rel="canonical" href="./documentation/navigationsplitview/">
+            <style>
+              body {
+                font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                margin: 0;
+                background: #f5f5f7;
+              }
+              .container {
+                text-align: center;
+                padding: 2rem;
+              }
+              h1 {
+                font-size: 2rem;
+                font-weight: 600;
+                margin-bottom: 1rem;
+                color: #1d1d1f;
+              }
+              p {
+                font-size: 1.125rem;
+                color: #86868b;
+              }
+              a {
+                color: #0071e3;
+                text-decoration: none;
+              }
+              a:hover {
+                text-decoration: underline;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h1>NavigationSplitView Documentation</h1>
+              <p>Redirecting to <a href="./documentation/navigationsplitview/">documentation</a>...</p>
+            </div>
+            <script>
+              window.location.href = "./documentation/navigationsplitview/";
+            </script>
+          </body>
+          </html>
+          EOF
+
+          echo "=== Created root redirect ==="
+          cat DocsBuild/index.html
+
       - name: Upload documentation artifact
         if: github.event_name == 'push'
         uses: actions/upload-pages-artifact@v3

@@ -60,68 +60,66 @@ jobs:
           echo "=== Documentation processed for static hosting ==="
           echo "Hosting base path: $DOCC_HOSTING_BASE_PATH"
 
-      - name: Add .nojekyll and root redirect
+          echo ""
+          echo "=== Directory structure ==="
+          find DocsBuild -type d | sort
+
+          echo ""
+          echo "=== Files in documentation directory ==="
+          find DocsBuild/documentation -type f 2>/dev/null | head -20 || echo "No documentation directory found"
+
+          echo ""
+          echo "=== Files in tutorials directory ==="
+          find DocsBuild/tutorials -type f 2>/dev/null | head -20 || echo "No tutorials directory found"
+
+          echo ""
+          echo "=== Root level files ==="
+          ls -la DocsBuild/
+
+          echo ""
+          echo "=== Index directory contents ==="
+          ls -la DocsBuild/index/ 2>/dev/null || echo "No index directory"
+
+          echo ""
+          echo "=== Data directory structure ==="
+          find DocsBuild/data -type f 2>/dev/null | head -10 || echo "No data directory"
+
+          echo ""
+          echo "=== metadata.json content ==="
+          cat DocsBuild/metadata.json 2>/dev/null || echo "No metadata.json"
+
+          echo ""
+          echo "=== Original index.html content ==="
+          cat DocsBuild/index.html
+
+      - name: Fix resource paths and add .nojekyll
         run: |
           # Add .nojekyll to prevent GitHub Pages from ignoring files starting with _
           touch DocsBuild/.nojekyll
 
-          # Create redirect from root to documentation page
-          # The actual documentation lives at /documentation/<bundle-id>/
-          cat > DocsBuild/index.html << 'EOF'
-          <!DOCTYPE html>
-          <html lang="en-US">
-          <head>
-            <meta charset="utf-8">
-            <title>Redirecting to NavigationSplitView Documentation</title>
-            <meta http-equiv="refresh" content="0; url=./documentation/navigationsplitview/">
-            <link rel="canonical" href="./documentation/navigationsplitview/">
-            <style>
-              body {
-                font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 100vh;
-                margin: 0;
-                background: #f5f5f7;
-              }
-              .container {
-                text-align: center;
-                padding: 2rem;
-              }
-              h1 {
-                font-size: 2rem;
-                font-weight: 600;
-                margin-bottom: 1rem;
-                color: #1d1d1f;
-              }
-              p {
-                font-size: 1.125rem;
-                color: #86868b;
-              }
-              a {
-                color: #0071e3;
-                text-decoration: none;
-              }
-              a:hover {
-                text-decoration: underline;
-              }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <h1>NavigationSplitView Documentation</h1>
-              <p>Redirecting to <a href="./documentation/navigationsplitview/">documentation</a>...</p>
-            </div>
-            <script>
-              window.location.href = "./documentation/navigationsplitview/";
-            </script>
-          </body>
-          </html>
-          EOF
+          # Fix resource paths in HTML files
+          # Even with DOCC_HOSTING_BASE_PATH in Xcode, DocC still generates absolute paths
+          echo "=== Fixing resource paths in HTML files ==="
+          find DocsBuild -type f -name "*.html" -exec sed -i '' \
+            -e 's|var baseUrl = "/"|var baseUrl = "/'$DOCC_HOSTING_BASE_PATH'/"|g' \
+            -e 's|src="/js/|src="/'$DOCC_HOSTING_BASE_PATH'/js/|g' \
+            -e 's|src="/css/|src="/'$DOCC_HOSTING_BASE_PATH'/css/|g' \
+            -e 's|href="/css/|href="/'$DOCC_HOSTING_BASE_PATH'/css/|g' \
+            -e 's|href="/favicon.ico"|href="/'$DOCC_HOSTING_BASE_PATH'/favicon.ico"|g' \
+            -e 's|href="/favicon.svg"|href="/'$DOCC_HOSTING_BASE_PATH'/favicon.svg"|g' \
+            {} +
 
-          echo "=== Created root redirect ==="
-          cat DocsBuild/index.html
+          # Fix paths in JavaScript files
+          echo "=== Fixing paths in JavaScript files ==="
+          find DocsBuild -type f -name "*.js" -exec sed -i '' \
+            -e 's|"/data/|"/'$DOCC_HOSTING_BASE_PATH'/data/|g' \
+            -e 's|"/tutorials/|"/'$DOCC_HOSTING_BASE_PATH'/tutorials/|g' \
+            -e 's|"/index/|"/'$DOCC_HOSTING_BASE_PATH'/index/|g' \
+            {} +
+
+          echo "=== Fixed paths ==="
+          echo "Fixed index.html:"
+          head -5 DocsBuild/index.html
 
       - name: Upload documentation artifact
         if: github.event_name == 'push'

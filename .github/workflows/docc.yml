@@ -45,11 +45,8 @@ jobs:
         run: |
           set -eo pipefail
           xcrun docc process-archive transform-for-static-hosting DocsArchive/NavigationSplitView.doccarchive \
-            --hosting-base-path NavigationSplitView \
+            --hosting-base-path /NavigationSplitView \
             --output-path DocsBuild
-          
-          # Fix the base URL in index.html
-          sed -i '' 's|"baseURL": "/"|"baseURL": "/NavigationSplitView/"|g' DocsBuild/index.html
 
       - name: Upload documentation artifact
         if: github.event_name == 'push'

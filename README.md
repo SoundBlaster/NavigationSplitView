@@ -3,6 +3,8 @@
 Minimal working example of usage NavigationSplitView for adaptive layout.
 Basic implementation of NavigationSplitView has several bugs and issues and does not work properly as Apple's engineers shown it on the WWDC 2022.
 
+![NavigationSplitView preview](imgs/preview.png)
+
 ## Documentation
 
 - [Пошаговое руководство по внедрению NavigationSplitView](NavigationSplitView_Implementation_Guide.md)

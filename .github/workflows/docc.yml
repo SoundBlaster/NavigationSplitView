@@ -51,72 +51,14 @@ jobs:
       - name: Prepare static documentation output
         run: |
           set -eo pipefail
+          # The DOCC_HOSTING_BASE_PATH is now set in Xcode project settings
+          # so DocC will generate the correct paths automatically
           xcrun docc process-archive transform-for-static-hosting DocsArchive/NavigationSplitView.doccarchive \
             --hosting-base-path "$DOCC_HOSTING_BASE_PATH" \
             --output-path DocsBuild
 
-          # Debug: Show the structure of generated files
-          echo "=== Generated file structure ==="
-          find DocsBuild -type f | head -20
-
-          # Debug: Show original index.html
-          echo "=== Original index.html (first 30 lines) ==="
-          head -30 DocsBuild/index.html || true
-
-          # Fix resource paths in HTML files
-          # DocC's --hosting-base-path doesn't add the base path to script/link tags in HTML
-          echo "=== Fixing resource paths in HTML files ==="
-          find DocsBuild -type f -name "*.html" | while read -r file; do
-            # Fix baseUrl JavaScript variable
-            sed -i '' 's|var baseUrl = "/"|var baseUrl = "/'$DOCC_HOSTING_BASE_PATH'/"|g' "$file"
-            sed -i '' 's|const baseUrl = "/"|const baseUrl = "/'$DOCC_HOSTING_BASE_PATH'/"|g' "$file"
-
-            # Fix script src attributes
-            sed -i '' 's|src="/js/|src="/'$DOCC_HOSTING_BASE_PATH'/js/|g' "$file"
-            sed -i '' 's|src="/css/|src="/'$DOCC_HOSTING_BASE_PATH'/css/|g' "$file"
-            sed -i '' 's|src="/images/|src="/'$DOCC_HOSTING_BASE_PATH'/images/|g' "$file"
-
-            # Fix link href attributes
-            sed -i '' 's|href="/js/|href="/'$DOCC_HOSTING_BASE_PATH'/js/|g' "$file"
-            sed -i '' 's|href="/css/|href="/'$DOCC_HOSTING_BASE_PATH'/css/|g' "$file"
-            sed -i '' 's|href="/images/|href="/'$DOCC_HOSTING_BASE_PATH'/images/|g' "$file"
-
-            # Fix favicon paths
-            sed -i '' 's|href="/favicon.ico"|href="/'$DOCC_HOSTING_BASE_PATH'/favicon.ico"|g' "$file"
-            sed -i '' 's|href="/favicon.svg"|href="/'$DOCC_HOSTING_BASE_PATH'/favicon.svg"|g' "$file"
-          done
-
-          # Fix data and documentation paths in JavaScript files
-          # JavaScript code has hardcoded absolute paths that need the base path prefix
-          echo "=== Fixing paths in JavaScript files ==="
-          find DocsBuild -type f -name "*.js" | while read -r file; do
-            # Fix root JSON files (theme-settings.json, etc.)
-            sed -i '' 's|"/theme-settings.json"|"/'$DOCC_HOSTING_BASE_PATH'/theme-settings.json"|g' "$file"
-            sed -i '' "s|'/theme-settings.json'|'/$DOCC_HOSTING_BASE_PATH/theme-settings.json'|g" "$file"
-
-            # Fix any other root-level .json files
-            sed -i '' 's|"\/\([^/]*\.json\)"|"/'$DOCC_HOSTING_BASE_PATH'/\1"|g' "$file"
-
-            # Fix data directory paths
-            sed -i '' 's|"/data/|"/'$DOCC_HOSTING_BASE_PATH'/data/|g' "$file"
-            sed -i '' "s|'/data/|'/$DOCC_HOSTING_BASE_PATH/data/|g" "$file"
-
-            # Fix documentation paths
-            sed -i '' 's|"/documentation/|"/'$DOCC_HOSTING_BASE_PATH'/documentation/|g' "$file"
-            sed -i '' "s|'/documentation/|'/$DOCC_HOSTING_BASE_PATH/documentation/|g" "$file"
-
-            # Fix tutorials paths
-            sed -i '' 's|"/tutorials/|"/'$DOCC_HOSTING_BASE_PATH'/tutorials/|g' "$file"
-            sed -i '' "s|'/tutorials/|'/$DOCC_HOSTING_BASE_PATH/tutorials/|g" "$file"
-          done
-
-          # Debug: Show fixed index.html
-          echo "=== Fixed index.html ==="
-          cat DocsBuild/index.html || true
-
-          echo ""
-          echo "=== Checking for NavigationSplitView in JS files ==="
-          grep -o "NavigationSplitView" DocsBuild/js/*.js | head -5 || echo "Not found"
+          echo "=== Documentation processed for static hosting ==="
+          echo "Hosting base path: $DOCC_HOSTING_BASE_PATH"
 
       - name: Add .nojekyll and root redirect
         run: |

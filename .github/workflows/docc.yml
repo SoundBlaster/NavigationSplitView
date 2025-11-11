@@ -55,9 +55,28 @@ jobs:
             --hosting-base-path "$DOCC_HOSTING_BASE_PATH" \
             --output-path DocsBuild
 
-          # Fix the baseURL in generated HTML
+          # Debug: Show the structure of generated files
+          echo "=== Generated file structure ==="
+          find DocsBuild -type f | head -20
+
+          # Debug: Find all files containing baseURL
+          echo "=== Files containing 'baseURL' ==="
+          grep -r "baseURL" DocsBuild --include="*.html" --include="*.js" || true
+
+          # Fix the baseURL in generated HTML and JavaScript files
           # DocC's --hosting-base-path doesn't always set baseURL correctly, so we fix it manually
-          sed -i '' "s|\"baseURL\": \"/\"|\"baseURL\": \"/$DOCC_HOSTING_BASE_PATH/\"|g" DocsBuild/index.html
+          echo "=== Fixing baseURL in all relevant files ==="
+          find DocsBuild -type f \( -name "*.html" -o -name "*.js" \) | while read -r file; do
+            sed -i '' 's|"baseURL":"/"|"baseURL":"/'$DOCC_HOSTING_BASE_PATH'/"|g' "$file"
+            sed -i '' "s|'baseURL':'/'|'baseURL':'/$DOCC_HOSTING_BASE_PATH/'|g" "$file"
+            sed -i '' 's|baseURL:"/"|baseURL":"/'$DOCC_HOSTING_BASE_PATH'/"|g' "$file"
+            sed -i '' 's|var baseUrl = "/"|var baseUrl = "/'$DOCC_HOSTING_BASE_PATH'/"|g' "$file"
+            sed -i '' 's|const baseUrl = "/"|const baseUrl = "/'$DOCC_HOSTING_BASE_PATH'/"|g' "$file"
+          done
+
+          # Debug: Verify the fix
+          echo "=== After fix: Files containing 'baseURL' ==="
+          grep -r "baseURL" DocsBuild --include="*.html" --include="*.js" | head -10 || true
 
       - name: Upload documentation artifact
         if: github.event_name == 'push'

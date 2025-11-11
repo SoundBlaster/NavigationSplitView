@@ -59,24 +59,35 @@ jobs:
           echo "=== Generated file structure ==="
           find DocsBuild -type f | head -20
 
-          # Debug: Find all files containing baseURL
-          echo "=== Files containing 'baseURL' ==="
-          grep -r "baseURL" DocsBuild --include="*.html" --include="*.js" || true
+          # Debug: Show original index.html
+          echo "=== Original index.html (first 30 lines) ==="
+          head -30 DocsBuild/index.html || true
 
-          # Fix the baseURL in generated HTML and JavaScript files
-          # DocC's --hosting-base-path doesn't always set baseURL correctly, so we fix it manually
-          echo "=== Fixing baseURL in all relevant files ==="
-          find DocsBuild -type f \( -name "*.html" -o -name "*.js" \) | while read -r file; do
-            sed -i '' 's|"baseURL":"/"|"baseURL":"/'$DOCC_HOSTING_BASE_PATH'/"|g' "$file"
-            sed -i '' "s|'baseURL':'/'|'baseURL':'/$DOCC_HOSTING_BASE_PATH/'|g" "$file"
-            sed -i '' 's|baseURL:"/"|baseURL":"/'$DOCC_HOSTING_BASE_PATH'/"|g' "$file"
-            sed -i '' 's|var baseUrl = "/"|var baseUrl = "/'$DOCC_HOSTING_BASE_PATH'/"|g' "$file"
-            sed -i '' 's|const baseUrl = "/"|const baseUrl = "/'$DOCC_HOSTING_BASE_PATH'/"|g' "$file"
+          # Fix resource paths in HTML files
+          # DocC's --hosting-base-path doesn't add the base path to script/link tags in HTML
+          echo "=== Fixing resource paths in HTML files ==="
+          find DocsBuild -type f -name "*.html" | while read -r file; do
+            # Fix script src attributes
+            sed -i '' 's|src="/js/|src="/'$DOCC_HOSTING_BASE_PATH'/js/|g' "$file"
+            sed -i '' 's|src="/css/|src="/'$DOCC_HOSTING_BASE_PATH'/css/|g' "$file"
+            sed -i '' 's|src="/images/|src="/'$DOCC_HOSTING_BASE_PATH'/images/|g' "$file"
+
+            # Fix link href attributes
+            sed -i '' 's|href="/js/|href="/'$DOCC_HOSTING_BASE_PATH'/js/|g' "$file"
+            sed -i '' 's|href="/css/|href="/'$DOCC_HOSTING_BASE_PATH'/css/|g' "$file"
+            sed -i '' 's|href="/images/|href="/'$DOCC_HOSTING_BASE_PATH'/images/|g' "$file"
+
+            # Fix favicon paths
+            sed -i '' 's|href="/favicon.ico"|href="/'$DOCC_HOSTING_BASE_PATH'/favicon.ico"|g' "$file"
+            sed -i '' 's|href="/favicon.svg"|href="/'$DOCC_HOSTING_BASE_PATH'/favicon.svg"|g' "$file"
+
+            # Fix data directory paths
+            sed -i '' 's|"/data/|"/'$DOCC_HOSTING_BASE_PATH'/data/|g' "$file"
           done
 
-          # Debug: Verify the fix
-          echo "=== After fix: Files containing 'baseURL' ==="
-          grep -r "baseURL" DocsBuild --include="*.html" --include="*.js" | head -10 || true
+          # Debug: Show fixed index.html
+          echo "=== Fixed index.html (first 30 lines) ==="
+          head -30 DocsBuild/index.html || true
 
       - name: Upload documentation artifact
         if: github.event_name == 'push'

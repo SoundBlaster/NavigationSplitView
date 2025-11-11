@@ -60,6 +60,26 @@ jobs:
           echo "=== Documentation processed for static hosting ==="
           echo "Hosting base path: $DOCC_HOSTING_BASE_PATH"
 
+          echo ""
+          echo "=== Directory structure ==="
+          find DocsBuild -type d | sort
+
+          echo ""
+          echo "=== Files in documentation directory ==="
+          find DocsBuild/documentation -type f 2>/dev/null | head -20 || echo "No documentation directory found"
+
+          echo ""
+          echo "=== Files in tutorials directory ==="
+          find DocsBuild/tutorials -type f 2>/dev/null | head -20 || echo "No tutorials directory found"
+
+          echo ""
+          echo "=== Root level files ==="
+          ls -la DocsBuild/
+
+          echo ""
+          echo "=== Original index.html content ==="
+          cat DocsBuild/index.html
+
       - name: Add .nojekyll and root redirect
         run: |
           # Add .nojekyll to prevent GitHub Pages from ignoring files starting with _

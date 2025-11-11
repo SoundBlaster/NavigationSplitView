@@ -1,0 +1,65 @@
+name: DocC Documentation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: docc-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build DocC archive
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Select Xcode 16.1 Developer Directory
+        run: sudo xcode-select -s /Applications/Xcode_16.1.app/Contents/Developer
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build documentation archive
+        run: |
+          set -eo pipefail
+          mkdir -p DocsArchive
+          xcrun docc convert XcodeProject/NewNav/Documentation.docc \
+            --fallback-display-name "NavigationSplitView" \
+            --fallback-bundle-identifier com.example.NavigationSplitView \
+            --fallback-bundle-version 1.0 \
+            --emit-lmdb-index \
+            --output-path DocsArchive/NavigationSplitView.doccarchive
+
+      - name: Prepare static documentation output
+        run: |
+          set -eo pipefail
+          xcrun docc process-archive transform-for-static-hosting DocsArchive/NavigationSplitView.doccarchive \
+            --hosting-base-path navigation-split-view \
+            --output-path DocsBuild
+
+      - name: Upload documentation artifact
+        if: github.event_name == 'push'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: DocsBuild
+
+  deploy:
+    name: Deploy documentation
+    needs: build
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

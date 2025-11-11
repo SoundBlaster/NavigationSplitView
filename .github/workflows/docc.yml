@@ -39,14 +39,25 @@ jobs:
         run: |
           set -eo pipefail
           # Clean up any previous build artifacts
-          rm -rf DocsArchive DocsBuild
+          rm -rf DerivedData DocsArchive DocsBuild
+
+          # Use xcodebuild docbuild to build full documentation including API
+          # This will create both /documentation/ (API) and /tutorials/ sections
+          # DOCC_HOSTING_BASE_PATH is set in Xcode project, but we can override via environment
+          xcodebuild docbuild \
+            -project XcodeProject/NewNav.xcodeproj \
+            -scheme NewNav \
+            -derivedDataPath ./DerivedData \
+            -destination 'generic/platform=iOS' \
+            DOCC_HOSTING_BASE_PATH="$DOCC_HOSTING_BASE_PATH"
+
+          # Find the generated .doccarchive
+          DOCCARCHIVE=$(find DerivedData -name "*.doccarchive" | head -1)
+          echo "Found doccarchive at: $DOCCARCHIVE"
+
+          # Copy to expected location
           mkdir -p DocsArchive
-          xcrun docc convert XcodeProject/NewNav/Documentation.docc \
-            --fallback-display-name "NavigationSplitView" \
-            --fallback-bundle-identifier com.example.NavigationSplitView \
-            --fallback-bundle-version 1.0 \
-            --emit-lmdb-index \
-            --output-path DocsArchive/NavigationSplitView.doccarchive
+          cp -R "$DOCCARCHIVE" DocsArchive/NavigationSplitView.doccarchive
 
       - name: Prepare static documentation output
         run: |

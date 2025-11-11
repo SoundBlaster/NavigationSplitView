@@ -92,14 +92,34 @@ jobs:
           echo "=== Original index.html content ==="
           cat DocsBuild/index.html
 
-      - name: Add .nojekyll file
+      - name: Fix resource paths and add .nojekyll
         run: |
           # Add .nojekyll to prevent GitHub Pages from ignoring files starting with _
           touch DocsBuild/.nojekyll
-          echo "Added .nojekyll file"
 
-          # NOTE: Not replacing index.html - let DocC's generated index.html work as-is
-          # DocC should generate proper navigation for standalone documentation catalogs
+          # Fix resource paths in HTML files
+          # Even with DOCC_HOSTING_BASE_PATH in Xcode, DocC still generates absolute paths
+          echo "=== Fixing resource paths in HTML files ==="
+          find DocsBuild -type f -name "*.html" -exec sed -i '' \
+            -e 's|var baseUrl = "/"|var baseUrl = "/'$DOCC_HOSTING_BASE_PATH'/"|g' \
+            -e 's|src="/js/|src="/'$DOCC_HOSTING_BASE_PATH'/js/|g' \
+            -e 's|src="/css/|src="/'$DOCC_HOSTING_BASE_PATH'/css/|g' \
+            -e 's|href="/css/|href="/'$DOCC_HOSTING_BASE_PATH'/css/|g' \
+            -e 's|href="/favicon.ico"|href="/'$DOCC_HOSTING_BASE_PATH'/favicon.ico"|g' \
+            -e 's|href="/favicon.svg"|href="/'$DOCC_HOSTING_BASE_PATH'/favicon.svg"|g' \
+            {} +
+
+          # Fix paths in JavaScript files
+          echo "=== Fixing paths in JavaScript files ==="
+          find DocsBuild -type f -name "*.js" -exec sed -i '' \
+            -e 's|"/data/|"/'$DOCC_HOSTING_BASE_PATH'/data/|g' \
+            -e 's|"/tutorials/|"/'$DOCC_HOSTING_BASE_PATH'/tutorials/|g' \
+            -e 's|"/index/|"/'$DOCC_HOSTING_BASE_PATH'/index/|g' \
+            {} +
+
+          echo "=== Fixed paths ==="
+          echo "Fixed index.html:"
+          head -5 DocsBuild/index.html
 
       - name: Upload documentation artifact
         if: github.event_name == 'push'

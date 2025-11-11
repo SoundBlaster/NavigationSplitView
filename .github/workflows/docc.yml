@@ -80,14 +80,32 @@ jobs:
             # Fix favicon paths
             sed -i '' 's|href="/favicon.ico"|href="/'$DOCC_HOSTING_BASE_PATH'/favicon.ico"|g' "$file"
             sed -i '' 's|href="/favicon.svg"|href="/'$DOCC_HOSTING_BASE_PATH'/favicon.svg"|g' "$file"
+          done
 
+          # Fix data and documentation paths in JavaScript files
+          # JavaScript code has hardcoded absolute paths that need the base path prefix
+          echo "=== Fixing paths in JavaScript files ==="
+          find DocsBuild -type f -name "*.js" | while read -r file; do
             # Fix data directory paths
             sed -i '' 's|"/data/|"/'$DOCC_HOSTING_BASE_PATH'/data/|g' "$file"
+            sed -i '' "s|'/data/|'/$DOCC_HOSTING_BASE_PATH/data/|g" "$file"
+
+            # Fix documentation paths
+            sed -i '' 's|"/documentation/|"/'$DOCC_HOSTING_BASE_PATH'/documentation/|g' "$file"
+            sed -i '' "s|'/documentation/|'/$DOCC_HOSTING_BASE_PATH/documentation/|g" "$file"
+
+            # Fix tutorials paths
+            sed -i '' 's|"/tutorials/|"/'$DOCC_HOSTING_BASE_PATH'/tutorials/|g' "$file"
+            sed -i '' "s|'/tutorials/|'/$DOCC_HOSTING_BASE_PATH/tutorials/|g" "$file"
           done
 
           # Debug: Show fixed index.html
-          echo "=== Fixed index.html (first 30 lines) ==="
-          head -30 DocsBuild/index.html || true
+          echo "=== Fixed index.html ==="
+          cat DocsBuild/index.html || true
+
+          echo ""
+          echo "=== Checking for NavigationSplitView in JS files ==="
+          grep -o "NavigationSplitView" DocsBuild/js/*.js | head -5 || echo "Not found"
 
       - name: Upload documentation artifact
         if: github.event_name == 'push'

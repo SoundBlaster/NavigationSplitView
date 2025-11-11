@@ -127,6 +127,7 @@ jobs:
           echo "=== Fixing paths in JavaScript files ==="
           find DocsBuild -type f -name "*.js" -exec sed -i '' \
             -e 's|"/data/|"/'$DOCC_HOSTING_BASE_PATH'/data/|g' \
+            -e 's|"/documentation/|"/'$DOCC_HOSTING_BASE_PATH'/documentation/|g' \
             -e 's|"/tutorials/|"/'$DOCC_HOSTING_BASE_PATH'/tutorials/|g' \
             -e 's|"/index/|"/'$DOCC_HOSTING_BASE_PATH'/index/|g' \
             {} +
@@ -134,6 +135,26 @@ jobs:
           echo "=== Fixed paths ==="
           echo "Fixed index.html:"
           head -5 DocsBuild/index.html
+
+      - name: Create root redirect
+        run: |
+          # Create redirect from root to documentation/newnav
+          cat > DocsBuild/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en-US">
+          <head>
+            <meta charset="utf-8">
+            <title>Redirecting to NewNav Documentation</title>
+            <meta http-equiv="refresh" content="0; url=./documentation/newnav/">
+            <link rel="canonical" href="./documentation/newnav/">
+          </head>
+          <body>
+            <p>Redirecting to <a href="./documentation/newnav/">NewNav Documentation</a>...</p>
+            <script>window.location.href = "./documentation/newnav/";</script>
+          </body>
+          </html>
+          EOF
+          echo "Created redirect to documentation/newnav/"
 
       - name: Upload documentation artifact
         if: github.event_name == 'push'

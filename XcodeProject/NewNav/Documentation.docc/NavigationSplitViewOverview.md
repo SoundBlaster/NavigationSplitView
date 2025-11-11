@@ -9,7 +9,7 @@ Explore the sample code contained in the NavigationSplitView repository and lear
 
 ## Getting Started
 
-1. Open the **XcodeProject/NewNav.xcodeproj** workspace in Xcode 15 or newer.
+1. Open the **XcodeProject/NewNav.xcodeproj** project in Xcode 15 or newer.
 2. Build and run the **NewNav** target on an iPad, Mac, or visionOS simulator to inspect the baseline behavior.
 3. Browse the SwiftUI views inside **XcodeProject/NewNav/NewNav** to see how the models, view models, and views cooperate to populate the split view columns.
 

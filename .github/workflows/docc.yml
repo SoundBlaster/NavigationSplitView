@@ -119,6 +119,9 @@ jobs:
             -e 's|src="/js/|src="/'$DOCC_HOSTING_BASE_PATH'/js/|g' \
             -e 's|src="/css/|src="/'$DOCC_HOSTING_BASE_PATH'/css/|g' \
             -e 's|href="/css/|href="/'$DOCC_HOSTING_BASE_PATH'/css/|g' \
+            -e 's|href="/js/|href="/'$DOCC_HOSTING_BASE_PATH'/js/|g' \
+            -e 's|href="/documentation/|href="/'$DOCC_HOSTING_BASE_PATH'/documentation/|g' \
+            -e 's|href="/tutorials/|href="/'$DOCC_HOSTING_BASE_PATH'/tutorials/|g' \
             -e 's|href="/favicon.ico"|href="/'$DOCC_HOSTING_BASE_PATH'/favicon.ico"|g' \
             -e 's|href="/favicon.svg"|href="/'$DOCC_HOSTING_BASE_PATH'/favicon.svg"|g' \
             {} +
@@ -131,6 +134,16 @@ jobs:
             -e 's|"/tutorials/|"/'$DOCC_HOSTING_BASE_PATH'/tutorials/|g' \
             -e 's|"/index/|"/'$DOCC_HOSTING_BASE_PATH'/index/|g' \
             {} +
+
+          # Fix paths in JSON data files
+          echo "=== Fixing paths in JSON files ==="
+          find DocsBuild/data -type f -name "*.json" -exec sed -i '' \
+            -e 's|"/documentation/|"/'$DOCC_HOSTING_BASE_PATH'/documentation/|g' \
+            -e 's|"/tutorials/|"/'$DOCC_HOSTING_BASE_PATH'/tutorials/|g' \
+            -e 's|"/images/|"/'$DOCC_HOSTING_BASE_PATH'/images/|g' \
+            -e 's|"/videos/|"/'$DOCC_HOSTING_BASE_PATH'/videos/|g' \
+            -e 's|"/downloads/|"/'$DOCC_HOSTING_BASE_PATH'/downloads/|g' \
+            {} + 2>/dev/null || echo "No JSON files to fix"
 
           echo "=== Fixed paths ==="
           echo "Fixed index.html:"

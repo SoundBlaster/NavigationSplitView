@@ -9,13 +9,17 @@ struct ContentView: View {
     var body: some View {
         @Bindable var model = navigationModel
         
-        NavigationSplitView(columnVisibility: $model.columnVisibility) {
+        NavigationSplitView(
+            columnVisibility: $model.columnVisibility,
+            preferredCompactColumn: $model.preferredCompactColumn
+        ) {
             List(library.categories, selection: $model.selectedCategory) { category in
                 NavigationLink(value: category) {
                     Text(category.name)
                 }
             }
             .navigationTitle("Categories")
+            .navigationSplitViewColumnWidth(min: 180, ideal: 240, max: 320)
         } content: {
             CategoryView(
                 category: model.selectedCategory,

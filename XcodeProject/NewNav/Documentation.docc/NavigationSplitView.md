@@ -7,6 +7,7 @@ Build adaptable multi-column experiences with SwiftUI's `NavigationSplitView`. E
 ### Articles
 
 - <doc:NavigationSplitViewOverview>
+- <doc:AdaptiveWindowSizes>
 
 ### Tutorials
 

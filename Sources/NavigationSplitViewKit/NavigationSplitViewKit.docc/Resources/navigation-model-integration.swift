@@ -8,7 +8,10 @@ struct AppContentView: View {
     var body: some View {
         @Bindable var model = navigationModel
 
-        NavigationSplitView(columnVisibility: $model.columnVisibility) {
+        NavigationSplitView(
+            columnVisibility: $model.columnVisibility,
+            preferredCompactColumn: $model.preferredCompactColumn
+        ) {
             List(library.categories, selection: $model.selectedCategory) { category in
                 Text(category.name)
                     .tag(category)

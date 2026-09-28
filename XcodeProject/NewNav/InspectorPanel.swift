@@ -1,7 +1,4 @@
 import SwiftUI
-#if os(iOS)
-import UIKit
-#endif
 
 struct ColorPlaceholder: View {
     var body: some View {
@@ -24,14 +21,12 @@ struct ColorPlaceholder: View {
 
 struct InspectorPanel: View {
     
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    
     let color: CustomColor?
     var onDismiss: (() -> Void)? = nil
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 0) {
-            if let onDismiss, shouldShowCloseButton {
+            if let onDismiss {
                 Button {
                     onDismiss()
                 } label: {
@@ -117,13 +112,6 @@ struct InspectorPanel: View {
         }
     }
 
-    private var shouldShowCloseButton: Bool {
-        #if os(iOS)
-        return UIDevice.current.userInterfaceIdiom == .phone && horizontalSizeClass == .regular
-        #else
-        return false
-        #endif
-    }
 }
 
 struct InspectorPanel_Previews: PreviewProvider {

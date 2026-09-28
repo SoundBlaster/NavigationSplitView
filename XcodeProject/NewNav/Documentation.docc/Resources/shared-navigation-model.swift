@@ -6,6 +6,7 @@ final class NavigationModel {
     var selectedCategory: CustomColorCategory?
     var selectedColor: CustomColor?
     var columnVisibility: NavigationSplitViewVisibility = .doubleColumn
+    var preferredCompactColumn: NavigationSplitViewColumn = .sidebar
     var showInspector = false
 
     func bootstrap(with categories: [CustomColorCategory]) {

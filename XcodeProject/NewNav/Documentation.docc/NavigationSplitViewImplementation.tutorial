@@ -57,7 +57,7 @@
 
     @Section(title: "Refine platform behavior") {
         @ContentAndMedia {
-            Size classes and column visibility controls let you tailor the experience to each platform without creating separate screens.
+            Let the split view respond to compact and expanded scenes, then adapt individual panes to their own available width when needed.
         }
 
         @Steps {
@@ -68,13 +68,13 @@
             }
 
             @Step {
-                Observe `horizontalSizeClass` and respond to changes with modifiers like `task` and `onChange`. Update the navigation model whenever the size class changes so inspectors and selections stay in sync.
+                Read `horizontalSizeClass` for broad compact and regular navigation changes, but let `NavigationSplitView` manage its own column collapse. Keep valid selections and the inspector preference when the scene resizes; reconcile a selection only when its parent changes or the selected item is removed. Bind `preferredCompactColumn` when the app needs to control the compact stack.
 
                 @Code(name: "ContentView.swift", file: "size-class-handling.swift")
             }
 
             @Step {
-                Connect additional UI state (toolbars, inspectors, preview panes) to the same bindings so the experience stays synchronized even when the user opens multiple windows or rotates their device.
+                Keep navigation and inspector state with the scene that owns the window. On Mac, do not use horizontal size class as a window-width measurement; use local container sizing for pane-specific layout changes.
 
                 @Code(name: "ContentView.swift", file: "selection-sync.swift")
             }

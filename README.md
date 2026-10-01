@@ -4,7 +4,7 @@
 [![Platform](https://img.shields.io/badge/platforms-iOS%2017.0%2B%20%7C%20macOS%2014.0%2B-lightgrey.svg)](https://developer.apple.com/swift)
 [![Documentation](https://img.shields.io/badge/docs-online-blue.svg)](https://soundblaster.github.io/NavigationSplitView/documentation/navigationsplitviewkit/)
 
-A production-ready Swift package demonstrating adaptive three-column layouts with SwiftUI's `NavigationSplitView`. Features synchronized state management, size class adaptations, and inspector panels for iOS, iPadOS, and macOS.
+A Swift package demonstrating adaptive three-column layouts with SwiftUI's `NavigationSplitView`. It keeps navigation state across compact and expanded scenes and supports iPhone, iPad, foldable iPhone layouts, and resizable Mac windows.
 
 ![NavigationSplitView preview](imgs/preview.png)
 
@@ -13,7 +13,7 @@ A production-ready Swift package demonstrating adaptive three-column layouts wit
 - ✅ **Swift Package Manager** - Easily integrate into any project
 - ✅ **Three-column layout** - Sidebar, content, and detail columns with inspector panel
 - ✅ **State synchronization** - Centralized navigation model keeps selections in sync
-- ✅ **Size class adaptation** - Responsive behavior across iPhone, iPad, and Mac
+- ✅ **Window-size adaptation** - Compact navigation, resizable columns, and retained selection across iPhone, iPad, and Mac windows
 - ✅ **Inspector panel** - Contextual information with adaptive visibility
 - ✅ **Tuist support** - Demo app showcasing the library
 - ✅ **Comprehensive documentation** - DocC tutorials and API reference
@@ -91,6 +91,7 @@ NavigationSplitView/
 
 - **[Online Documentation](https://soundblaster.github.io/NavigationSplitView/documentation/navigationsplitviewkit/)** - Complete API reference and tutorials
 - **[Tutorial](https://soundblaster.github.io/NavigationSplitView/tutorials/navigationsplitviewkit/navigationsplitviewimplementation)** - Step-by-step implementation guide
+- **[Adapting to window sizes](Sources/NavigationSplitViewKit/NavigationSplitViewKit.docc/AdaptiveWindowSizes.md)** - Guidance for compact and resizable scenes
 
 ### Building Documentation Locally
 
@@ -148,7 +149,7 @@ Executed 5 tests, with 0 failures (0 unexpected) in 0.003 seconds
 - **`ColorsSelectionList`** - Selectable list of colors
 - **`DetailView`** - Color detail presentation
 - **`InspectorPanel`** - Contextual information panel
-- **`SizeClassAdaptiveView`** - Size class conditional rendering
+- **`SizeClassAdaptiveView`** - Compact and regular content with a compact fallback
 
 ## Migration from Xcode Project
 

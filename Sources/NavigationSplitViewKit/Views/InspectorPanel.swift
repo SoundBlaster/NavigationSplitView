@@ -1,9 +1,5 @@
 import SwiftUI
 
-#if os(iOS)
-    import UIKit
-#endif
-
 /// A placeholder view shown when no color is selected.
 public struct ColorPlaceholder: View {
     public init() {}
@@ -29,8 +25,6 @@ public struct ColorPlaceholder: View {
 /// An inspector panel that displays detailed information about a color.
 public struct InspectorPanel: View {
 
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
-
     public let color: CustomColor?
     public var onDismiss: (() -> Void)? = nil
 
@@ -41,7 +35,7 @@ public struct InspectorPanel: View {
 
     public var body: some View {
         VStack(alignment: .trailing, spacing: 0) {
-            if let onDismiss, shouldShowCloseButton {
+            if let onDismiss {
                 Button {
                     onDismiss()
                 } label: {
@@ -127,13 +121,6 @@ public struct InspectorPanel: View {
         }
     }
 
-    private var shouldShowCloseButton: Bool {
-        #if os(iOS)
-            return UIDevice.current.userInterfaceIdiom == .phone && horizontalSizeClass == .regular
-        #else
-            return false
-        #endif
-    }
 }
 
 #Preview("With Color") {

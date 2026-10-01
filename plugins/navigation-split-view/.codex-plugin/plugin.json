@@ -1,7 +1,7 @@
 {
   "name": "navigation-split-view",
-  "version": "0.1.0",
-  "description": "SwiftUI NavigationSplitView patterns for adaptive multi-column apps.",
+  "version": "0.1.0+codex.20260928054233",
+  "description": "SwiftUI NavigationSplitView patterns for iPhone, iPad, Mac, and foldable resizable windows.",
   "author": {
     "name": "SoundBlaster",
     "url": "https://github.com/SoundBlaster"
@@ -13,7 +13,7 @@
   "interface": {
     "displayName": "NavigationSplitView",
     "shortDescription": "Build adaptive SwiftUI split navigation.",
-    "longDescription": "Guidance based on NavigationSplitViewKit for synchronizing selections, adapting between compact and regular layouts, and presenting inspectors across Apple platforms.",
+    "longDescription": "Guidance based on NavigationSplitViewKit for preserving navigation state, adapting to compact and resizable windows, and presenting inspectors across iPhone, iPad, and Mac.",
     "developerName": "SoundBlaster",
     "category": "Coding",
     "capabilities": ["SwiftUI", "Navigation"],
@@ -21,7 +21,9 @@
     "defaultPrompt": [
       "Help me design an adaptive NavigationSplitView.",
       "Review my SwiftUI split-view selection state.",
-      "Adapt this inspector for compact layouts."
+      "Adapt this inspector for compact layouts.",
+      "Adapt this inspector for a resizable iPad or Mac window.",
+      "Prepare a SwiftUI split view for a foldable iPhone."
     ]
   }
 }

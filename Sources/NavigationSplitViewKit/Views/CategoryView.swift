@@ -24,6 +24,7 @@ public struct CategoryView: View {
                 }
         }
         .navigationTitle(category?.name ?? "")
+        .navigationSplitViewColumnWidth(min: 220, ideal: 280, max: 360)
     }
 }
 

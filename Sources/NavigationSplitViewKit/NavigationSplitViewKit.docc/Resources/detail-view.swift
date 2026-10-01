@@ -6,7 +6,8 @@ struct DetailView: View {
             if let color {
                 Rectangle()
                     .fill(color.color)
-                    .frame(width: 200, height: 200)
+                    .aspectRatio(1, contentMode: .fit)
+                    .frame(maxWidth: 240)
                 Text(color.name)
             } else {
                 ColorPlaceholder()

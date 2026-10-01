@@ -14,11 +14,10 @@ struct SizeClassAdaptiveView<RegularContent: View, CompactContent: View>: View {
     
     var body: some View {
         Group {
-            if horizontalSizeClass == nil {
-                EmptyView()
-            } else if horizontalSizeClass == .regular {
+            if horizontalSizeClass == .regular {
                 regular()
             } else {
+                // Compact is the safe fallback for environments without a size class.
                 compact()
             }
         }

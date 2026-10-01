@@ -28,7 +28,7 @@ var body: some View {
 
 ## Read the right size signal
 
-`horizontalSizeClass` is useful for broad compact and regular navigation changes. It is not a direct measurement of a Mac window: macOS reports a regular horizontal size class even when a window becomes narrow. When one pane needs a different composition at a particular width, make that decision from the pane's local proposed size with a tool such as `ViewThatFits` or `GeometryReader`.
+`horizontalSizeClass` is useful for broad compact and regular navigation changes. Apple documents SwiftUI's macOS value as always `.regular`, so it does not indicate whether a Mac window is narrow. When one pane needs a different composition at a particular width, make that decision from the pane's local proposed size with a tool such as `ViewThatFits` or `GeometryReader`. See [Apple's `horizontalSizeClass` documentation](https://developer.apple.com/documentation/swiftui/environmentvalues/horizontalsizeclass).
 
 If an environment value is unavailable, choose a useful fallback layout. Do not substitute device idiom, screen size, or orientation when the real question is how much room the current view has.
 
